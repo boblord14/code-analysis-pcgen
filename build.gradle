@@ -254,6 +254,8 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation 'org.hamcrest:hamcrest:3.0'
     testImplementation 'org.testfx:testfx-junit5:4.0.18'
+    // Source: https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.23.0'
 
     // 21.0.2 is the latest version. As of Nov 2025, we have moved to OpenJFX 25 so this may cause issues
     testImplementation 'org.testfx:openjfx-monocle:21.0.2'
