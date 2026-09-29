@@ -15,6 +15,15 @@ Rationale for Ability Tests:
 - 4.) `testGetPCCText_emptyContext`: Case for the `Ability::getPCCText` where the mock return for the parsed context is empty.
 - 5.) `testGetPCCText_emptyPrerequisites`: Case for the `Ability::getPCCText` after the prerequisites list has been cleared.
 
+Rationale for Equipment Tests:
+
+- 1.) `setLocation` has a special case for the `CONTAINED` location that changes the location to `CARRIED_NEITHER`. My test verifies that this special case actually changes the location instead of marking the equipment as equipped.
+- 2.) `setNumberEquipped` sets the equipped state when the number equipped is greater than zero. My test verifies that setting a positive number equipped marks the equipment as equipped.
+- 3.) `setLocation` also sets the equipped state based on the provided location. This tests the `EQUIPPED_TWO_HANDS` case to verify that the location and equipped state are both set correctly.
+- 4.) `getParentName` returns `"Carried"` when the equipment has no parent but has a positive number carried. my test verifies that the carried case properly returns the expected string.
+- 5.) `typeIndex` returns an empty string when given an invalid index. This tests the edge case of requesting a type outside the valid range which wasn't covered previously but was still intended behavior.
+
+
 
 New Test Results + Coverage Comparison:
 - Number of tests ran: 15
