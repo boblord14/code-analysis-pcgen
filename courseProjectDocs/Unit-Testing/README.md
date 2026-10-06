@@ -2,6 +2,7 @@ Added test files:
 
 code/src/test/pcgen/core/EquipmentTest.java
 code/src/test/pcgen/core/character/SpellInfoTest.java
+code/src/test/pcgen/persistence/lst/LstFileLoaderTest.java
 
 How to run tests:
 Clone and open repo in intelliJ(or similar)
