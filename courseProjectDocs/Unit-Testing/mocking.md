@@ -49,3 +49,40 @@ loadGameModeFallsBackWhenFailsToLoad checks the other fallback case where the fi
 LstLineFileLoader needs to be mocked, since the tests are meant to check the logic in `GameModeFileLoader` rather than actually parsing LST files. Stubbing the loader allows the throwing of the persistence layer exception, without needing to create a broken LST file.
 
 ConfigurationSettings is statically mocked so the tests can control which temp directory is treated as the systems directory. This keeps the tests isolated from the actual PCGen and lets the temporary test files control exactly which branch is taken.
+
+### CampaignFileLoaderTest.java
+
+This class implements a single public `run()` method as a PCGenTask (Runnable). Testing the different branches assuming different values passed from dependencies.
+
+`testRun_Normal` is the "happy path" of running the task. We ensure that the correct number of files are found and initialized.
+`testRun_NothingFound` tests the case where file URIs return `null`, indicating that no files were found. In this case, no files should be initialized.
+`testRun_AlternateSourceFolder` tests when the alternate source folder is set, meaning that the original file locations will NOT be checked.
+`testRun_PersistenceException` tests when the files are found, but attempting to initialize them raises an exception. 
+    In this case, we check for the logged errors after the exception is caught.
+
+### Mocking Strategy 
+This class was a pain in the behind to mock. The class needed to be modified in order to pass in dependencies for testing.
+    The class initializes dependencies as follows, without using dependency injection:
+```java
+RecursiveFileFinder recursiveFileFinder = new RecursiveFileFinder();
+// ...
+CampaignLoader campaignLoader = new CampaignLoader();
+```
+A new constructor (and static setter) was added for testing purposes:
+```java
+	CampaignFileLoader(
+			RecursiveFileFinder recursiveFileFinder,
+			CampaignLoader campaignLoader
+	) {
+		this.recursiveFileFinder = recursiveFileFinder;
+		this.campaignLoader = campaignLoader;
+	}
+    
+    // used since a `campaignLoader` object is also initialized within a static method
+    static void setCampaignLoaderStatic(CampaignLoader campaignLoader) {
+        CampaignFileLoader.campaignLoaderStatic = campaignLoader;
+    }
+```
+Classes `Globals`, `ConfigurationSettings`, `PCGenSettings`, `Logging`, are mocked statically to avoid using existing system data,
+    or in the case of `Logging`, to prevent actual log messages from being created. 
+Dependencies `RecursiveFileFinder` and `CampaignFileLoader` are mocked to prevent real file system interactions. 
