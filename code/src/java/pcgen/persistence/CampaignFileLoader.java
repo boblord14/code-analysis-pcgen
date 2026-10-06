@@ -42,7 +42,12 @@ public class CampaignFileLoader extends PCGenTask
 
 	public CampaignFileLoader() {}
 
-	public CampaignFileLoader(
+	/**
+	 * For passing dependencies when TESTING only atm.
+	 * @param recursiveFileFinder
+	 * @param campaignLoader
+	 */
+	CampaignFileLoader(
 			RecursiveFileFinder recursiveFileFinder,
 			CampaignLoader campaignLoader
 	) {
@@ -50,7 +55,11 @@ public class CampaignFileLoader extends PCGenTask
 		this.campaignLoader = campaignLoader;
 	}
 
-    public static void setCampaignLoaderStatic(CampaignLoader campaignLoader) {
+	/**
+	 * For passing dependencies when TESTING only atm.
+	 * @param campaignLoader
+	 */
+	static void setCampaignLoaderStatic(CampaignLoader campaignLoader) {
         CampaignFileLoader.campaignLoaderStatic = campaignLoader;
     }
 
