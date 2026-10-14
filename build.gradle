@@ -33,6 +33,51 @@ plugins {
     id 'com.dorongold.task-tree' version '4.0.2'        // Prints the task dependency tree
     id 'org.beryx.jlink' version '4.1.1'             // Creates custom runtimes with jlink
     id 'jacoco'                                         // Code coverage
+    id 'info.solidsoft.pitest' version '1.19.0'
+}
+
+pitest {
+    targetClasses = ['pcgen.core.*']
+    targetTests   = ['pcgen.*']
+    threads = 4
+    outputFormats = ['XML', 'HTML']
+    timestampedReports = false
+    mutators = ['DEFAULTS']
+    timeoutConstInMillis = 10000
+    withHistory = true
+    excludedTestClasses = ['pcgen.testsupport.*']
+
+    testSourceSets = [sourceSets.test]
+    mainSourceSets = [sourceSets.main]
+    junit5PluginVersion = '1.2.1'
+
+    jvmArgs = [
+            '-Xmx1g',
+            '-Djava.awt.headless=true',
+            '-Dtestfx.robot=glass',
+            '-Dtestfx.headless=true',
+            '-Dprism.order=sw',
+            '-Dprism.verbose=true',
+            '-Djavafx.macosx.embedded=true',
+            '-Djava.security.manager=disallow',
+
+
+            "--module-path", layout.projectDirectory.dir("mods/lib").asFile.absolutePath,
+            '--add-modules=javafx.controls',
+            '--add-modules=javafx.web',
+            '--add-modules=javafx.swing',
+            '--add-modules=javafx.fxml',
+            '--add-modules=javafx.graphics',
+
+            // Needed to fix issue with testfx test crashing due to issue with modularity of whole program. Slightly related issue. https://github.com/TestFX/TestFX/issues/638
+            '--add-exports', 'javafx.graphics/com.sun.javafx.application=ALL-UNNAMED',
+            // Next two needed to support monocle testing
+            '--add-exports', 'javafx.graphics/com.sun.javafx.util=ALL-UNNAMED',
+            '--add-exports', 'javafx.base/com.sun.javafx.logging=ALL-UNNAMED',
+            '--add-opens', 'javafx.graphics/com.sun.glass.ui=ALL-UNNAMED',
+            '--enable-native-access=javafx.graphics',
+            '--add-opens', 'javafx.graphics/com.sun.javafx.application=ALL-UNNAMED',
+    ]
 }
 
 jacoco {
@@ -267,6 +312,7 @@ dependencies {
 
     pmd 'net.sourceforge.pmd:pmd-java:7.27.0'
     pmd 'net.sourceforge.pmd:pmd-ant:7.27.0' // workaround: https://github.com/pmd/pmd/issues/4554
+    pitest 'org.junit.platform:junit-platform-launcher:6.1.3'
 }
 
 jar {
