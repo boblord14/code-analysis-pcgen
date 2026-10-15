@@ -36,8 +36,34 @@ import pcgen.util.Logging;
 public class CampaignFileLoader extends PCGenTask
 {
 	private File alternateSourceFolder = null;
+	private RecursiveFileFinder recursiveFileFinder = null;
+	private CampaignLoader campaignLoader = null;
+	private static CampaignLoader campaignLoaderStatic = null;
 
-	@Override
+	public CampaignFileLoader() {}
+
+	/**
+	 * For passing dependencies when TESTING only atm.
+	 * @param recursiveFileFinder
+	 * @param campaignLoader
+	 */
+	CampaignFileLoader(
+			RecursiveFileFinder recursiveFileFinder,
+			CampaignLoader campaignLoader
+	) {
+		this.recursiveFileFinder = recursiveFileFinder;
+		this.campaignLoader = campaignLoader;
+	}
+
+	/**
+	 * For passing dependencies when TESTING only atm.
+	 * @param campaignLoader
+	 */
+	static void setCampaignLoaderStatic(CampaignLoader campaignLoader) {
+        CampaignFileLoader.campaignLoaderStatic = campaignLoader;
+    }
+
+    @Override
 	public String getMessage()
 	{
 		return LanguageBundle.getString("in_taskLoadCampaigns"); //$NON-NLS-1$
@@ -48,6 +74,10 @@ public class CampaignFileLoader extends PCGenTask
 	{
 		// Load the initial campaigns
 		RecursiveFileFinder recursiveFileFinder = new RecursiveFileFinder();
+		if(this.recursiveFileFinder != null) {
+			recursiveFileFinder = this.recursiveFileFinder;
+		}
+
 		final List<URI> campaignFiles = new LinkedList<>();
 		if (alternateSourceFolder != null)
 		{
@@ -77,6 +107,10 @@ public class CampaignFileLoader extends PCGenTask
 	{
 		int progress = 0;
 		CampaignLoader campaignLoader = new CampaignLoader();
+		if(this.campaignLoader != null) {
+			campaignLoader = this.campaignLoader;
+		}
+
 		for (URI uri : campaignFiles)
 		{
 			// Do not load campaign if already loaded
@@ -110,6 +144,10 @@ public class CampaignFileLoader extends PCGenTask
 		Iterable<Campaign> initialCampaigns = new ArrayList<>(Globals.getCampaignList());
 
 		CampaignLoader campaignLoader = new CampaignLoader();
+		if(campaignLoaderStatic != null) {
+			campaignLoader = campaignLoaderStatic;
+		}
+
 		for (final Campaign c : initialCampaigns)
 		{
 			campaignLoader.initRecursivePccFiles(c);
