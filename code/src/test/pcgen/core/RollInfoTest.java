@@ -182,4 +182,15 @@ class RollInfoTest
 		}
 		assertEquals(validatorOk, constructorOk);
 	}
+	// @ParameterizedTest(name = "keeping all dice: {0}")
+	// @ValueSource(strings = {"4d6/4", "4d6\\4"})
+	// void keepingAllDiceDoesntNeedOmitSpecified(String roll)
+	// {
+	// 	assertEquals("4d6", new RollInfo(roll).toString());
+	// }
+
+
 }
+
+
+

@@ -46,6 +46,13 @@ Before I wrote the test, `NameGenDataLoaderTest.java` has 90%(179/198) line cove
 Afterward, it now has 91%(180/198) line coverage, 63%(42/67) mutation coverage, and 67%(42/63) test strength. Successful test. 
 
 #### Collin
+I wrote a test in 'RollInfoTest.java' because there were 2 conditional boundary mutants left unhandled if a mutant changes > to >= when checking PCgen's dice notation. The test chacks that keeping all dice using the keep-top (4d6/4) or keep-bottom (4d6\4) notation produces 4d6. I wrote a very simple parameterized test to verify that the 4d6 was preserved in both instances. Both of the mutants targeted were killed and as such, the test detects unwanted rejection of boundary values.
+
+The mutants killed were at lines 147 and 163 of 'RollInfo.java'. Two if statements
+
+Before adding the test, 'RollInfoTest.java' has 95%(141/148) line coverage, 78%(63/81) mutation coverage, and 84%(63/75) test strength
+
+Afterward, it now has 95%(141/148) line coverage, 80%(65/81) mutation coverage, and 87%(65/75) test strength
 
 #### Coray
 
