@@ -183,4 +183,20 @@ class NameGenDataLoaderTest
 				.anyMatch(u -> u.kind() == NameGenData.UnresolvedReference.Kind.GETRULE
 						&& "missing-ruleset".equals(u.targetId())));
 	}
+
+	@Test
+	void checkIgnoreFilesWithoutRightGeneratorType(@TempDir Path tempDir) throws IOException{
+		Files.copy(new File(DATA_DIR, "generator.dtd").toPath(),
+				tempDir.resolve("generator.dtd"));
+		Files.writeString(tempDir.resolve("badDoctype.xml"),
+				"<?xml version=\"1.0\"?><!DOCTYPE OTHER []>" + "<GENERATOR>"
+						+ "<LIST title=\"L\" id=\"L\"><VALUE>test</VALUE></LIST>"
+						 + "</GENERATOR>");
+		Files.writeString(tempDir.resolve("nullDoctype.xml"),
+				"<?xml version=\"1.0\"?>" + "<GENERATOR>"
+						+ "<LIST title=\"L\" id=\"L\"><VALUE>test</VALUE></LIST>"
+						 + "</GENERATOR>");
+		NameGenData data = NameGenDataLoader.load(tempDir.toFile());
+		assertTrue(data.lists().isEmpty());
+	}
 }
