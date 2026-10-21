@@ -55,6 +55,28 @@ Before adding the test, 'RollInfoTest.java' has 95%(141/148) line coverage, 78%(
 Afterward, it now has 95%(141/148) line coverage, 80%(65/81) mutation coverage, and 87%(65/75) test strength
 
 #### Coray
+I wrote a couple of straightforward tests in `RuleCheckTest.java` that test the correct setting logic for the `setParameter` method,
+which can potentially set both the `parm` and `var` fields in the objects.
+
+Before writing, `RuleCheckTest.java` did not exist and so `RuleCheck.java` had zero coverage.
+
+Afterward, it now has 35% (13/37) line coverage, 24% (4/17) mutation coverage, and 100% (4/4) test strength.
+
+```
+140
+1. removed conditional - replaced comparison check with false → KILLED
+2. changed conditional boundary → KILLED
+
+148
+1. replaced return value with "" for pcgen/core/RuleCheck::getParameter → KILLED
+
+162
+1. replaced return value with "" for pcgen/core/RuleCheck::getVariable → KILLED
+```
 
 ### Post-new-test mutation score report
-`insert post score report here from the console output after the last person finishes it`
+>> Line Coverage (for mutated classes only): 1576/19757 (8%)
+>> 2352 tests examined
+>> Generated 11300 mutations Killed 395 (3%)
+>> Mutations with no coverage 10600. Test strength 56%
+>> Ran 8311 tests (0.74 tests per mutation)
