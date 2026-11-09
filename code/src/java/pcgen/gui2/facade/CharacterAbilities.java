@@ -458,7 +458,7 @@ public class CharacterAbilities
 		BigDecimal pool = theCharacter.getAvailableAbilityPool(category);
 
 		final BigDecimal newRemain = new BigDecimal(remaining);
-		if (pool.equals(newRemain))
+		if (pool.compareTo(newRemain) == 0)
 		{
 			return;
 		}
