@@ -88,7 +88,7 @@ public abstract class JepCountType
 				{
 					if (assocList.contains(assoc))
 					{
-						accum++;
+						accum += 1.0f;
 					}
 				}
 			}
@@ -117,7 +117,7 @@ public abstract class JepCountType
 					{
 						if (assocList.contains(assoc))
 						{
-							accum++;
+							accum += 1.0f;
 						}
 					}
 				}

@@ -27,6 +27,10 @@
 
 Ethan: Set up sonarCloud. Some strange licensing and access issues prevented us from using SonarQube in the way we intended, however, Ethan got the setup working and was able to get us the results and find several easily fixable issues.
 
+Additionally fixed one of the issues listed in sonarqube, specifically in `code/src/java/pcgen/util/JepCountType.java` where
+`accum++` was used where `accum` was a float value. Sonarqube doesnt like this as it's(technically) adding an int. Adjusted all instances
+of this in the file to `accum += 1.0f` which is compliant. 
+
 Coray: 
 
 Collin: fixed a small issue in the facade/CharacterAbilities.java which handled an if statement present in decimal displays for character abilities that relied on a .equals() instead of a compareTo() which could be causing unintended behavior. Wrote the report
