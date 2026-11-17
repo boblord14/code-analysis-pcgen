@@ -28,12 +28,14 @@ import pcgen.cdom.content.CNAbility;
 import pcgen.core.Ability;
 import pcgen.core.Language;
 import pcgen.core.PCTemplate;
+import pcgen.core.Race;
 import pcgen.io.testsupport.AbstractSaveRestoreTest;
 import plugin.exporttokens.deprecated.TemplateToken;
 import plugin.lsttokens.ability.StackToken;
 import plugin.lsttokens.deprecated.TemplateFeatToken;
 import plugin.lsttokens.testsupport.BuildUtilities;
 import plugin.lsttokens.testsupport.TokenRegistration;
+import pcgen.rules.persistence.token.ParseResult;
 
 import org.junit.jupiter.api.Test;
 
@@ -77,6 +79,30 @@ class GeneralSaveRestoreTest extends AbstractSaveRestoreTest
 		reloadedPC.removeTemplate(pct);
 		assertFalse(reloadedPC.hasLanguage(lang));
 	}
-	
+
+	@Test 
+	void testRaceVsTemplateLanguageOverlap(){
+		//create custom language, race, and template
+		Language lang = create(Language.class, "SharedLang");
+		Race race = create(Race.class, "SharedLangRace");
+		PCTemplate template = create(PCTemplate.class, "SharedLangTemplate");
+		//make both the race and the template grant the same language
+		assertEquals(ParseResult.SUCCESS, new plugin.lsttokens.auto.LangToken().parseToken(context, race, "SharedLang"));
+		assertEquals(ParseResult.SUCCESS, new plugin.lsttokens.auto.LangToken().parseToken(context, template, "SharedLang"));
+		finishLoad();
+		//create a character with the template and the race
+		pc.setRace(race);
+		pc.addTemplate(template);
+		assertTrue(pc.hasLanguage(lang)); //ensure the character has the language
+
+		runRoundRobin(null); //save and reload and compare the original with the saved copy
+		assertTrue(reloadedPC.hasLanguage(lang)); //explicitly ensure the character still has the language
+
+		reloadedPC.removeTemplate(template);	//remove the template
+		assertTrue(reloadedPC.hasLanguage(lang)); //ensure the character still has the language due to race
+
+		reloadedPC.setRace(context.getReferenceContext().silentlyGetConstructedCDOMObject(Race.class, "Human")); //swap the race
+		assertFalse(reloadedPC.hasLanguage(lang)); //ensure the character no longer has the language after the template and race were both changed
+	}
 	
 }

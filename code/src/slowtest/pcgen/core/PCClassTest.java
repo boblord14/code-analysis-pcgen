@@ -987,6 +987,70 @@ class PCClassTest extends AbstractCharacterTestCase
 		assertEquals(3, bonusList.size(), "No new bonus due to the LEVELSPERFEAT");
 	}
 
+	/**
+	 * Test for inputting malformed data through the PCClass loader to the actual data system. Verifies that the system
+	 * properly handles handling the malformed data strings, and checking the objects they output and how they respond to it.
+	 * @throws PersistenceLayerException
+	 */
+	@Test
+	void testBadClassData() throws PersistenceLayerException {
+
+		CampaignSourceEntry source;
+		try
+		{
+			source = new CampaignSourceEntry(new Campaign(),
+					new URI("file:/" + getClass().getName() + ".java"));
+		}
+		catch (URISyntaxException e)
+		{
+			throw new UnreachableError(e);
+		}
+
+		PCClassLoader classLoader = new PCClassLoader();
+		LoadContext context = Globals.getContext();
+
+		//testing bad HD value
+		String classDefTypo =
+				"CLASS:badClass		KEY:KEY_Bad	TYPE:Monster	HD:string	STARTSKILLPTS:6	MODTOSKILLS:YES	";
+		classLoader = new PCClassLoader();
+		PCClass badNymphClass = classLoader.parseLine(context, null, classDefTypo, source);
+
+		//legit HD value
+		String classDefGood =
+				"CLASS:goodClass		KEY:KEY_Good	TYPE:Monster	HD:5	STARTSKILLPTS:6	MODTOSKILLS:YES	";
+		PCClass goodNymphClass = classLoader.parseLine(context, null, classDefGood, source);
+
+		finishLoad();
+
+		//check that the load finishes rather than throwing an error despite the malformed data
+		assertNotNull(badNymphClass);
+		//and i suppose a real load as well
+		assertNotNull(goodNymphClass);
+
+		//data validation in classes based on the entry
+		assertEquals("0", badNymphClass.getHD());
+		assertEquals("5", goodNymphClass.getHD());
+
+		//set player up with race and bad class, then try and use it
+		PlayerCharacter pc = getCharacter();
+		pc.setRace(nymphRace);
+		pc.incrementClassLevel(1, badNymphClass);
+
+		//check successful levelup in spite of errors and that the HD reads as 0 despite that not(well, shouldnt) being the case
+		PCClass badCharClass = pc.getClassKeyed(badNymphClass.getKeyName());
+		assertEquals(1, pc.getLevel(badCharClass));
+		assertEquals(0, pc.getLevelHitDie(badNymphClass, 1).getDie());
+
+		//same checks but with the good one
+		pc.incrementClassLevel(1, goodNymphClass);
+
+		//HD value should be real this time around
+		PCClass goodCharClass = pc.getClassKeyed(goodNymphClass.getKeyName());
+		assertEquals(1, pc.getLevel(goodCharClass));
+		assertEquals(5, pc.getLevelHitDie(goodCharClass, 1).getDie());
+
+	}
+
 	@BeforeEach
 	@Override
 	public void setUp() throws Exception
