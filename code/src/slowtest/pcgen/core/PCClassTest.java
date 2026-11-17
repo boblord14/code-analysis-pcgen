@@ -987,6 +987,43 @@ class PCClassTest extends AbstractCharacterTestCase
 		assertEquals(3, bonusList.size(), "No new bonus due to the LEVELSPERFEAT");
 	}
 
+	@Test
+	void testBadClassData() throws PersistenceLayerException {
+
+		CampaignSourceEntry source;
+		try
+		{
+			source = new CampaignSourceEntry(new Campaign(),
+					new URI("file:/" + getClass().getName() + ".java"));
+		}
+		catch (URISyntaxException e)
+		{
+			throw new UnreachableError(e);
+		}
+
+		PCClassLoader classLoader = new PCClassLoader();
+		LoadContext context = Globals.getContext();
+
+		//testing bad HD value
+		String classDef =
+				"CLASS:badClass		KEY:KEY_Bad	TYPE:Monster	HD:string	STARTSKILLPTS:6	MODTOSKILLS:YES	";
+		classLoader = new PCClassLoader();
+		PCClass badNymphClass = classLoader.parseLine(context, null, classDef, source);
+
+		finishLoad();
+
+		System.out.println(badNymphClass);
+
+		//set player up with race and bad class, then try and use it
+		PlayerCharacter pc = getCharacter();
+		pc.setRace(nymphRace);
+		pc.incrementClassLevel(1, badNymphClass);
+
+		PCClass charClass = pc.getClassKeyed(badNymphClass.getKeyName());
+		//i swear this fails while debugging and passes otherwise, TODO: look into
+		assertEquals(1, pc.getLevel(charClass), "Class still successfully loads");
+	}
+
 	@BeforeEach
 	@Override
 	public void setUp() throws Exception
